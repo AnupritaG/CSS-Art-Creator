@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CSS Art Creator</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    .controls h2 {
+      margin: 0 0 10px;
+      text-align: center;
+    }
+    label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .artboard {
+      margin-top: 20px;
+      width: 300px;
+      height: 300px;
+      background: #ddd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+      position: relative;
+    }
+    #art {
+      width: 150px;
+      height: 150px;
+      transition: all 0.5s ease;
+    }
+    textarea#cssCode {
+      margin-top: 20px;
+      width: 90%;
+      height: 120px;
+      font-family: monospace;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: none;
+    }
+    .palette {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .palette input {
+      width: 50px;
+      height: 50px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <h2>CSS Art Creator 🎨</h2>
+    <label>Shape:
+      <select id="shape">
+        <option value="square">Square</option>
+        <option value="circle">Circle</option>
+        <option value="triangle">Triangle</option>
+      </select>
+    </label>
+    <label>Background Color:
+      <input type="color" id="bgColor" value="#ff6b6b" />
+    </label>
+    <label>Gradient (Pick two colors):
+      <div class="palette">
+        <input type="color" id="gradColor1" value="#ff6b6b" />
+        <input type="color" id="gradColor2" value="#f0f0f0" />
+        
+        
+      </div>
+    </label>
+    <label>Gradient Toggle:
+      <input type="checkbox" id="gradientToggle" />
+    </label>
+    <label>Rotation:
+      <input type="range" id="rotate" min="0" max="360" value="0" /> <span id="rotationValue">0°</span>
+    </label>
+    <label>Border Radius:
+      <input type="range" id="radius" min="0" max="50" value="0" /> <span id="radiusValue">0%</span>
+    </label>
+    <button id="randomize">Randomize 🎲</button>
+    <button id="export">Export CSS 📋</button>
+  </div>
+  <div class="artboard">
+    <div id="art"></div>
+  </div>
+  <textarea id="cssCode" readonly></textarea>
+  <script>
+    const art = document.getElementById('art');
+    const shapeSelect = document.getElementById('shape');
+    const bgColorInput = document.getElementById('bgColor');
+    const gradColor1 = document.getElementById('gradColor1');
+    const gradColor2 = document.getElementById('gradColor2');
+    const gradientToggle = document.getElementById('gradientToggle');
+    const rotateInput = document.getElementById('rotate');
+    const radiusInput = document.getElementById('radius');
+    const rotationValue = document.getElementById('rotationValue');
+    const radiusValue = document.getElementById('radiusValue');
+    const randomizeBtn = document.getElementById('randomize');
+    const exportBtn = document.getElementById('export');
+    const cssCode = document.getElementById('cssCode');
+
+    function updateArt() {
+      const shape = shapeSelect.value;
+      const bgColor = bgColorInput.value;
+      const grad1 = gradColor1.value;
+      const grad2 = gradColor2.value;
+      const isGradient = gradientToggle.checked;
+      const rotate = rotateInput.value;
+      const radius = radiusInput.value;
+
+      let background = bgColor;
+      if (isGradient) {
+        background = `linear-gradient(45deg, ${grad1}, ${grad2})`;
+      }
+
+      art.style.background = shape !== 'triangle' ? background : 'transparent';
+      art.style.transform = `rotate(${rotate}deg)`;
+      art.style.borderRadius = shape === 'circle' ? '50%' : `${radius}%`;
+
+      if (shape === 'triangle') {
+        art.style.width = 0;
+        art.style.height = 0;
+        art.style.borderLeft = '75px solid transparent';
+        art.style.borderRight = '75px solid transparent';
+        art.style.borderBottom = `150px solid ${bgColor}`;
+      } else {
+        art.style.width = '150px';
+        art.style.height = '150px';
+        art.style.border = 'none';
+        art.style.borderLeft = 'none';
+        art.style.borderRight = 'none';
+        art.style.borderBottom = 'none';
+      }
+
+      rotationValue.textContent = `${rotate}°`;
+      radiusValue.textContent = `${radius}%`;
+
+      const css = `
+#art {
+  width: ${shape === 'triangle' ? '0' : '150px'};
+  height: ${shape === 'triangle' ? '0' : '150px'};
+  background: ${shape !== 'triangle' ? background : 'transparent'};
+  border-radius: ${shape === 'circle' ? '50%' : `${radius}%`};
+  transform: rotate(${rotate}deg);
+  ${shape === 'triangle' ? `
+  border-left: 75px solid transparent;
+  border-right: 75px solid transparent;
+  border-bottom: 150px solid ${bgColor};` : ''}
+}
+      `;
+      cssCode.value = css.trim();
+    }
+
+    function randomize() {
+      const shapes = ['square', 'circle', 'triangle'];
+      shapeSelect.value = shapes[Math.floor(Math.random() * shapes.length)];
+      bgColorInput.value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+      gradColor1.value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+      gradColor2.value = '#' + Math.floor(Math.random() * 16777215).toString(16);
+      gradientToggle.checked = Math.random() > 0.5;
+      rotateInput.value = Math.floor(Math.random() * 360);
+      radiusInput.value = Math.floor(Math.random() * 50);
+      updateArt();
+    }
+
+    function exportCSS() {
+      cssCode.select();
+      document.execCommand('copy');
+      alert('CSS code copied to clipboard!');
+    }
+
+    [shapeSelect, bgColorInput, gradColor1, gradColor2, gradColor2, gradientToggle, rotateInput, radiusInput].forEach(input => {
+      input.addEventListener('input', updateArt);
+    });
+    randomizeBtn.addEventListener('click', randomize);
+    exportBtn.addEventListener('click', exportCSS);
+    updateArt();
+  </script>
+</body>
+</html>

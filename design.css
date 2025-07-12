@@ -1,0 +1,85 @@
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 1s ease;
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow: hidden;
+  }
+  
+  .clock-container {
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 5rem;
+    margin: 0;
+  }
+  
+  p {
+    font-size: 1.5rem;
+  }
+  
+  /* Basic weather backgrounds */
+  .morning {
+    background: linear-gradient(to top, #ffefba, #ffffff);
+    color: #333;
+  }
+  
+  .afternoon {
+    background: linear-gradient(to top, #00c6ff, #0072ff);
+  }
+  
+  .evening {
+    background: linear-gradient(to top, #e96443, #904e95);
+  }
+  
+  .night {
+    background: linear-gradient(to top, #141e30, #243b55);
+  }
+  
+  /* Weather animations */
+  .rain::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.5) 2px,
+      transparent 2px,
+      transparent 4px
+    );
+    animation: rain 0.5s linear infinite;
+  }
+  
+  @keyframes rain {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 20px; }
+  }
+  
+  .clear::before {
+    content: '☀️';
+    position: absolute;
+    font-size: 10rem;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.5;
+  }
+  
+  .clouds::before {
+    content: '☁️';
+    position: absolute;
+    font-size: 10rem;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.5;
+  }
+  
